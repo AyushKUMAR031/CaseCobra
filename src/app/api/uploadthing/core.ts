@@ -1,14 +1,14 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { z } from "zod";
-
+//z is add for runtime validation
 const f = createUploadthing();
 
 // FileRouter for app, can contain multiple FileRoutes
 export const ourFileRouter = {
   // Defining multiple FileRoutes, each with a unique routeSlug
   imageUploader: f({ image: { maxFileSize: "4MB" } })
-  //z is for the runtime validation
-  .input(z.object({configId: z.string().optional()}))
+  
+  .input(z.object({configId: z.string().optional()})) // <-- z used here
     // Set permissions and file types for this FileRoute
     .middleware(async ({ input }) => {
       return { input }
