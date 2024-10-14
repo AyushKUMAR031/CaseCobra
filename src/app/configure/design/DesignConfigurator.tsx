@@ -1,6 +1,11 @@
+"use client"
+//rnd requires user interaction hence this page is heavily client side
+
+import HandlComponent from "@/components/HandleComponent";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from "@/lib/utils";
 import NextImage from "next/image";
+import {Rnd} from 'react-rnd'
 interface DesignConfigurationProps{
     configId: string;
     imageUrl: string;
@@ -22,10 +27,29 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                     {/* this div below is the part of dynamic change in color of the phone cover */}
                     <div className={cn("absolute inset-0 left-[3px] top-px right-[3px] bottom-px rounded-[32px]",`bg-blue-950`)}/>
                 </div>
-                <div className="relative w-full h-full">
-                    <NextImage src={imageUrl} fill alt="your image" className="pointer-events-none"/>
-                </div>
+                {/* this rnd default -> help with the initial position of the image uploaded */}
+                <Rnd default={{
+                    x: 150,
+                    y: 205,
+                    height: imageDimensions.height /4,
+                    width: imageDimensions.width /4,
+                }}
+                className="absolute z-20 border-[3px] border-primary"
+                lockAspectRatio
+                resizeHandleComponent={{
+                    bottomRight: <HandlComponent/>,
+                    bottomLeft: <HandlComponent/>,
+                    topRight: <HandlComponent/>,
+                    topLeft: <HandlComponent/>,
+                }}>
+                {/* to resizing techniques we use -> resizeHandlecomponent */}
+                    <div className="relative w-full h-full">
+                        <NextImage src={imageUrl} fill alt="your image" className="pointer-events-none"/>
+                    </div>
+                </Rnd>
             </div>
+
+            <div className="h-[37.5rem] flex flex-col bg-white"></div>
         </div>
     )
 }
