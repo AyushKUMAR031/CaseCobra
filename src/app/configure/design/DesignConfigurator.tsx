@@ -8,7 +8,7 @@ import { cn, formatPrice } from "@/lib/utils";
 import NextImage from "next/image";
 import {Rnd} from 'react-rnd'
 import {Radio, RadioGroup} from "@headlessui/react"
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { COLORS, FINISHES, MATERIALS, MODELS } from "@/validators/option-validator";
 import { Label } from "@/components/ui/label";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -35,11 +35,39 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
         finish: FINISHES.options[0],
     })
 
+    const [renderedDimension, setRenderedDimension] = useState(
+        {
+            width: imageDimensions.width/4,
+            height: imageDimensions.height/4,
+        }
+    )
+    //what is the cropped the image position and dimension
+
+    const [renderedPosition, setRenderedPosition] = useState({
+        x: 150,
+        y: 205,
+    })
+
+    const phoneCaseRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    async function saveConfiguration() {
+        try{
+            // ! -> for clearing specifing that their is phonecaseref.current or not
+            const {left: caseLeft, top: caseTop, width, height} = phoneCaseRef.current!.getBoundingClientRect()
+            // similar for container from the web page display
+            const {left: containerLeft, top: containerTop} = containerRef.current!.getBoundingClientRect()
+
+        }catch(err){
+
+        }
+    }
     return (
         <div className="relative mt-20 grid grid-cols-1 lg:grid-cols-3 mb-20 pb-20">
-            <div className="relative h-[37.5rem] overflow-hidden col-span-2 w-full max-w-4xl items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+            <div ref={containerRef} className="relative h-[37.5rem] overflow-hidden col-span-2 w-full max-w-4xl items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                 <div className="relative w-60 bg-opacity-50 pointer-events-none aspect-[896/1831]">
-                    <AspectRatio ratio={896/1831} className="pointer-events-none relative z-50 aspect-[896/1831] w-full">
+                {/* adding a part of phone reference positon in the AspectRatio */}
+                    <AspectRatio ref={phoneCaseRef} ratio={896/1831} className="pointer-events-none relative z-50 aspect-[896/1831] w-full">
                         <NextImage 
                             fill
                             alt='phone image' src="/phone-template.png" className="pointer-events-none z-50 select-none"
@@ -50,6 +78,7 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                     {/* this div below is the part of dynamic change in color of the phone cover */}
                     <div className={cn("absolute inset-0 left-[3px] top-px right-[3px] bottom-px rounded-[32px]",`bg-${options.color.tw}`)}/>
                 </div>
+
                 {/* this rnd default -> help with the initial position of the image uploaded */}
                 <Rnd default={{
                     x: 150,
@@ -57,6 +86,21 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                     height: imageDimensions.height /4,
                     width: imageDimensions.width /4,
                 }}
+                // for resizing the cropped image as per the user
+                onResizeStop={(_,__, ref, ___, {x,y}) => {
+                    setRenderedDimension({
+                        height: parseInt(ref.style.height.slice(0,-2)),
+                        width: parseInt(ref.style.width.slice(0,-2)),
+                    })
+
+                    setRenderedPosition({x,y})
+                }}
+                // for moving the cropped image as per the user (basically not cropping but draging)
+                onDragStop={(_, data) => {
+                    const {x,y} = data
+                    setRenderedPosition({x,y})
+                }}
+
                 className="absolute z-20 border-[3px] border-primary"
                 lockAspectRatio
                 resizeHandleComponent={{
@@ -65,11 +109,13 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                     topRight: <HandleComponent/>,
                     topLeft: <HandleComponent/>,
                 }}>
+
                 {/* to resizing techniques we use -> resizeHandlecomponent */}
                     <div className="relative w-full h-full">
                         <NextImage src={imageUrl} fill alt="your image" className="pointer-events-none"/>
                     </div>
                 </Rnd>
+
             </div>
 
             <div className="h-[37.5rem] w-full col-span-full lg:col-span-1 flex flex-col bg-white">
