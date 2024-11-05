@@ -15,6 +15,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
 import { BASE_PRICE } from "@/config/product";
+import { useUploadThing } from "@/lib/uploadthing";
+import { useToast } from "@/components/ui/use-toast";
 
 interface DesignConfiguratorProps{
     configId: string;
@@ -23,6 +25,7 @@ interface DesignConfiguratorProps{
 }
 const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfiguratorProps) =>{
 
+    const {toast} = useToast();
     const [options, setOptions] = useState<{
         color: (typeof COLORS)[number];
         model: (typeof MODELS.options)[number];
@@ -51,6 +54,9 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
     const phoneCaseRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
+    const {startUpload} = useUploadThing('imageUploader');
+    
+    //for any screen size and ratio it will config the image position and dimension w.r.t phone case
     async function saveConfiguration() {
         try{
             // ! -> for clearing specifing that their is phonecaseref.current or not
@@ -58,10 +64,65 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
             // similar for container from the web page display
             const {left: containerLeft, top: containerTop} = containerRef.current!.getBoundingClientRect()
 
-        }catch(err){
+            // diagonal symmetry of the phone case
+            const leftOffset = caseLeft - containerLeft;
+            const topOffset = caseTop - containerTop;
+            
+            const actualX = renderedPosition.x - leftOffset; //indirectly from the user Screen view 
+            const actualY = renderedPosition.y - topOffset;
 
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            const userImage = new Image();
+            userImage.crossOrigin = 'anonymous';
+            userImage.src = imageUrl;
+            await new Promise((resolve, reject) => (userImage.onload = resolve));
+
+            ctx?.drawImage(
+                userImage, //source image
+                actualX, //x position of the source image
+                actualY, //y position of the source image
+                renderedDimension.width, //width of the source image
+                renderedDimension.height, //height of the source image
+            )
+
+            //converting the image from HTML to base64 format
+            const base64 = canvas.toDataURL();
+            // console.log(base64);
+
+            //splitting the base64 data from the image
+            const base64Data = base64.split(',')[1];
+
+            //converting the base64 data to blob format and storing it
+            const blob = base64ToBlob(base64Data, 'image/png');
+            const file = new File([blob], 'filename.png', {type: 'image/png'});
+
+            await startUpload([file], {configId});
+        }catch(err){
+            toast({
+                title: 'Something went wrong',
+                description: 'There was a problem saving your config, Please try again',
+                variant: 'destructive',
+            })
         }
     }
+
+    //string to blob conversion
+    function base64ToBlob(base64: string, type: string){
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for(let i=0; i<byteCharacters.length; i++){
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers); //so that we can now convert into a blob element
+        return new Blob([byteArray], {type: type});
+    }
+
+
     return (
         <div className="relative mt-20 grid grid-cols-1 lg:grid-cols-3 mb-20 pb-20">
             <div ref={containerRef} className="relative h-[37.5rem] overflow-hidden col-span-2 w-full max-w-4xl items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
@@ -244,7 +305,7 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                             <p className='font-medium whitespace-nowrap'>
                                 {formatPrice((BASE_PRICE + options.finish.price + options.material.price) / 100)}
                             </p>
-                            <Button
+                            <Button onClick={() => saveConfiguration()}
                                 // isLoading={isPending}
                                 // disabled={isPending}
                                 // loadingText="Saving"
