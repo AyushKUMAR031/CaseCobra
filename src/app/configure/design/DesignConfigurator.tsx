@@ -7,7 +7,7 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { cn, formatPrice } from "@/lib/utils";
 import NextImage from "next/image";
 import {Rnd} from 'react-rnd'
-import {Radio, RadioGroup} from "@headlessui/react"
+import { RadioGroup } from "@headlessui/react"
 import { useRef, useState } from "react";
 import { COLORS, FINISHES, MATERIALS, MODELS } from "@/validators/option-validator";
 import { Label } from "@/components/ui/label";
@@ -44,8 +44,8 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
             height: imageDimensions.height/4,
         }
     )
-    //what is the cropped the image position and dimension
 
+    //what is the cropped the image position and dimension
     const [renderedPosition, setRenderedPosition] = useState({
         x: 150,
         y: 205,
@@ -137,7 +137,7 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                     {/* the below div is basic for graying the extra part over the phone and highligthing the main part of the cropped photo */}
                     <div className="absolute z-40 inset-0 left-[3px] top-px right-[3px] bottom-px rounded-[32px] shadow-[0_0_0_99999px_rgba(229,231,235,0.6)]"/>
                     {/* this div below is the part of dynamic change in color of the phone cover */}
-                    <div className={cn("absolute inset-0 left-[3px] top-px right-[3px] bottom-px rounded-[32px]",`bg-${options.color.tw}`)}/>
+                    <div className={cn("absolute inset-0 left-[3px] top-px right-[3px] bottom-px rounded-[32px] bg-zinc-950" )}/>
                 </div>
 
                 {/* this rnd default -> help with the initial position of the image uploaded */}
@@ -176,7 +176,6 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                         <NextImage src={imageUrl} fill alt="your image" className="pointer-events-none"/>
                     </div>
                 </Rnd>
-
             </div>
 
             <div className="h-[37.5rem] w-full col-span-full lg:col-span-1 flex flex-col bg-white">
@@ -187,31 +186,53 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                         <h2 className="tracking-tight font-bold text-3xl">Customize your case</h2>
                         <div className="w-full h-px bg-zinc-200 my-6"/>
 
-                        <div className="relative mt-4 h-full flex flex-col justify-between">
-                            <div className="flex flex-col gap-6">
-                                <RadioGroup value={options.color} onChange={(val) =>{
-                                    setOptions((prev) => ({
+                        <div className='relative mt-4 h-full flex flex-col justify-between'>
+                            <div className='flex flex-col gap-6'>
+                                {/* <RadioGroup
+                                    value={options.color}
+                                    onChange={(val) => {
+                                        setOptions((prev) => ({
                                         ...prev,
                                         color: val,
-                                    }))
-                                }}>
+                                        }))
+                                    }}>
                                     <Label>Color: {options.color.label}</Label>
-                                    <div className="mt-3 flex items-center space-x-3">
+                                    <div className='mt-3 flex items-center space-x-3'>
                                         {COLORS.map((color) => (
-                                            <Radio key={color.label} value={color} 
-                                                className={({focus, checked}) => 
-                                                    cn("relative -m-0.5 flex cursor-pointer items-center rounded-full p-0.5 active:ring-0 focus:outline-none border-2 border-transparent",
-                                                    {
-                                                        [`border-${color.tw}`]: focus || checked,
-                                                    }
-                                                )}
-                                            >
-                                                <span className={cn(`bg-${color.tw}`,"h-8 w-8 rounded-full border border-black border-opacity-10")}/>
-                                            </Radio>
+                                        <RadioGroup.Option
+                                            key={color.label}
+                                            value={color}
+                                            className={({ active, checked }) =>
+                                            cn(
+                                                'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 active:ring-0 focus:ring-0 active:outline-none focus:outline-none border-2 border-transparent',
+                                                {
+                                                [`border-${color.tw}`]: active || checked,
+                                                }
+                                            )
+                                            }>
+                                            <span
+                                            className={cn(
+                                                `bg-${color.tw}`,
+                                                'h-8 w-8 rounded-full border border-black border-opacity-10'
+                                            )}
+                                            />
+                                        </RadioGroup.Option>
                                         ))}
                                     </div>
+                                </RadioGroup> */}
+                                <RadioGroup>
+                                    <div className='mt-3 flex items-center space-x-3'> 
+                                        <span
+                                            className='bg-zinc-900 h-8 w-8 rounded-full border border-black border-opacity-10'
+                                        />
+                                        <span
+                                            className='bg-blue-900 h-8 w-8 rounded-full border border-black border-opacity-10'
+                                        /> 
+                                        <span
+                                        className='bg-rose-900 h-8 w-8 rounded-full border border-black border-opacity-10'
+                                        /> 
+                                    </div>
                                 </RadioGroup>
-
 
                                 <div className='relative flex flex-col gap-3 w-full'>
                                     <Label>Model</Label>
