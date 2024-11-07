@@ -58,8 +58,18 @@ const config: Config = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+			red: {
+			500: '#f56565',
+			},
+			blue: {
+			500: '#4299e1',
+			},
+			green: {
+			500: '#48bb78',
+			},
   		},
+		
 		animation:{
 			"marquee": 'marquee var(--marquee-duration) linear infinite',
 			'fade-in': 'fade-in 0.5s linear forwards',
