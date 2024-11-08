@@ -220,6 +220,8 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                                         ))}
                                     </div>
                                 </RadioGroup> */}
+
+                                {/* The loosly fixed radiogroup color */}
                                 <RadioGroup>
                                     <div className='mt-3 flex items-center space-x-3'> 
                                         <span
