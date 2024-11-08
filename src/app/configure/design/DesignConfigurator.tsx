@@ -247,7 +247,50 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                                         ))}
                                     </div>
                                 </RadioGroup> */}
-                                <RadioGroup>
+
+                                {/* New version of radiogroup */}
+                                <RadioGroup
+                                    value={options.color}
+                                    onChange={(val) => {
+                                        setOptions((prev) => ({
+                                        ...prev,
+                                        color: val,
+                                        }));
+                                    }}
+                                    >
+                                    <Label>Color: {options.color.label}</Label>
+                                    <div className='mt-3 flex items-center space-x-3'>
+                                        {COLORS.map((color) => {
+                                        const borderColorClass = color.tw === 'zinc-900' ? 'border-zinc-900' : color.tw === 'blue-950' ? 'border-blue-950' : 'border-rose-950';
+                                        const bgColorClass = color.tw === 'zinc-900' ? 'bg-zinc-900' : color.tw === 'blue-950' ? 'bg-blue-950' : 'bg-rose-950';
+
+                                        return (
+                                            <RadioGroup.Option
+                                            key={color.label}
+                                            value={color}
+                                            className={({ active, checked }) =>
+                                                cn(
+                                                'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 active:ring-0 focus:ring-0 active:outline-none focus:outline-none border-2 border-transparent',
+                                                {
+                                                    [borderColorClass]: active || checked,
+                                                }
+                                                )
+                                            }
+                                            >
+                                            <span
+                                                className={cn(
+                                                bgColorClass,
+                                                'h-8 w-8 rounded-full border border-black border-opacity-10'
+                                                )}
+                                            />
+                                            </RadioGroup.Option>
+                                        );
+                                        })}
+                                    </div>
+                                </RadioGroup>
+
+                                {/* The loosly fixed radiogroup color */}
+                                {/* <RadioGroup>
                                     <div className='mt-3 flex items-center space-x-3'> 
                                         <span
                                             className='bg-zinc-900 h-8 w-8 rounded-full border border-black border-opacity-10'
