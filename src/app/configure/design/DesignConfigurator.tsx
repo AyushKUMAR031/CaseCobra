@@ -17,6 +17,9 @@ import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
 import { BASE_PRICE } from "@/config/product";
 import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "@/components/ui/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { saveConfig as _saveConfig, SaveConfigArgs } from "./actions";
+import { useRouter } from "next/navigation";
 
 interface DesignConfiguratorProps{
     configId: string;
@@ -26,6 +29,28 @@ interface DesignConfiguratorProps{
 const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfiguratorProps) =>{
 
     const {toast} = useToast();
+    const router = useRouter();
+
+    //useMutation hook for saving the configuration.
+    //and redirecting to the third step.
+    const {mutate: saveConfig} = useMutation({
+        mutationKey: ["save-config"],
+        mutationFn: async (args: SaveConfigArgs) => {
+            // Save the config to the database
+            await Promise.all([saveConfiguration(), _saveConfig(args)])
+        },
+        onError: () => {
+            toast({
+                title: 'Something went wrong',
+                description: 'There was an error on our end. Please try again',
+                variant: 'destructive',
+            })
+        },
+        onSuccess: () => {
+            router.push(`/configure/previews?id=${configId}`)
+        },
+    })
+
     const [options, setOptions] = useState<{
         color: (typeof COLORS)[number];
         model: (typeof MODELS.options)[number];
@@ -137,7 +162,8 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                     {/* the below div is basic for graying the extra part over the phone and highligthing the main part of the cropped photo */}
                     <div className="absolute z-40 inset-0 left-[3px] top-px right-[3px] bottom-px rounded-[32px] shadow-[0_0_0_99999px_rgba(229,231,235,0.6)]"/>
                     {/* this div below is the part of dynamic change in color of the phone cover */}
-                    <div className={cn("absolute inset-0 left-[3px] top-px right-[3px] bottom-px rounded-[32px] bg-zinc-950" )}/>
+                    <div className={cn("absolute inset-0 left-[3px] top-px right-[3px] bottom-px rounded-[32px]", `bg-${options.color.tw}`)}/>
+                    {/* finally fixed on the custom color of the case */}
                 </div>
 
                 {/* this rnd default -> help with the initial position of the image uploaded */}
@@ -188,6 +214,7 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
 
                         <div className='relative mt-4 h-full flex flex-col justify-between'>
                             <div className='flex flex-col gap-6'>
+                                
                                 {/* <RadioGroup
                                     value={options.color}
                                     onChange={(val) => {
@@ -220,6 +247,50 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                                         ))}
                                     </div>
                                 </RadioGroup> */}
+
+
+                                {/* trying the const for the dynamic change in color */}
+                                <RadioGroup
+                                value={options.color}
+                                onChange={(val) => {
+                                    setOptions((prev) => ({
+                                    ...prev,
+                                    color: val,
+                                    }));
+                                }}
+                                >
+                                <Label>Color: {options.color.label}</Label>
+                                <div className='mt-3 flex items-center space-x-3'>
+                                    {COLORS.map((color) => {
+                                    const borderColorClass = color.tw === 'zinc-900' ? 'border-zinc-900' : color.tw === 'blue-950' ? 'border-blue-950' : 'border-rose-950';
+                                    const bgColorClass = color.tw === 'zinc-900' ? 'bg-zinc-900' : color.tw === 'blue-950' ? 'bg-blue-950' : 'bg-rose-950';
+
+                                    return (
+                                        <RadioGroup.Option
+                                        key={color.label}
+                                        value={color}
+                                        className={({ active, checked }) =>
+                                            cn(
+                                            'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 active:ring-0 focus:ring-0 active:outline-none focus:outline-none border-2 border-transparent',
+                                            {
+                                                [borderColorClass]: active || checked,
+                                            }
+                                            )
+                                        }
+                                        >
+                                        <span
+                                            className={cn(
+                                            bgColorClass,
+                                            'h-8 w-8 rounded-full border border-black border-opacity-10'
+                                            )}
+                                        />
+                                        </RadioGroup.Option>
+                                    );
+                                    })}
+                                </div>
+                                </RadioGroup>
+
+                                {/* The loosly fixed part
                                 <RadioGroup>
                                     <div className='mt-3 flex items-center space-x-3'> 
                                         <span
@@ -232,7 +303,7 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                                         className='bg-rose-900 h-8 w-8 rounded-full border border-black border-opacity-10'
                                         /> 
                                     </div>
-                                </RadioGroup>
+                                </RadioGroup> */}
 
                                 <div className='relative flex flex-col gap-3 w-full'>
                                     <Label>Model</Label>
@@ -326,19 +397,13 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                             <p className='font-medium whitespace-nowrap'>
                                 {formatPrice((BASE_PRICE + options.finish.price + options.material.price) / 100)}
                             </p>
-                            <Button onClick={() => saveConfiguration()}
-                                // isLoading={isPending}
-                                // disabled={isPending}
-                                // loadingText="Saving"
-                                // onClick={() =>
-                                // saveConfig({
-                                //     configId,
-                                //     color: options.color.value,
-                                //     finish: options.finish.value,
-                                //     material: options.material.value,
-                                //     model: options.model.value,
-                                // })
-                                // }
+                            <Button onClick={() => saveConfig({
+                                configId, 
+                                color: options.color.value,
+                                finish: options.finish.value,
+                                material: options.material.value,
+                                model: options.model.value,
+                                })}
                                 size='sm'
                                 className='w-full'>
                                 Continue
