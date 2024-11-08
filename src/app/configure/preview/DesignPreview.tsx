@@ -19,9 +19,13 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const router = useRouter()
   const { toast } = useToast()
-//   const { id } = configuration
-//   const { user } = useKindeBrowserClient()
-//   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false)
+
+  // for storing the data so that we can use it after auth -callback
+  const { id } = configuration
+  // getting the account or user info for the auth and data integrity
+  const { user } = useKindeBrowserClient()
+  // to get the state of login or not
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false)
 
   const [showConfetti, setShowConfetti] = useState<boolean>(false)
   useEffect(() => setShowConfetti(true))
@@ -57,16 +61,16 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
     },
   })
 
-//   const handleCheckout = () => {
-//     if (user) {
-//       // create payment session
-//       createPaymentSession({ configId: id })
-//     } else {
-//       // need to log in
-//       localStorage.setItem('configurationId', id)
-//       setIsLoginModalOpen(true)
-//     }
-//   }
+  const handleCheckout = () => {
+    if (user) {
+      // create payment session
+      createPaymentSession({ configId: id })
+    } else {
+      // need to log in
+      localStorage.setItem('configurationId', id)
+      setIsLoginModalOpen(true)
+    }
+  }
 
   return (
     <>
