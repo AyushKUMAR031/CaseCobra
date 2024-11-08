@@ -10,7 +10,10 @@ import Image from 'next/image'
 import { LoginLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs'
 import { buttonVariants } from './ui/button'
 
-const LoginModal = ({isOpen,setIsOpen,}: {
+const LoginModal = ({
+  isOpen,
+  setIsOpen,
+}: {
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
 }) => {
