@@ -68,6 +68,9 @@ const config: Config = {
 			green: {
 			500: '#48bb78',
 			},
+			black: {
+			900: '#1a202c',
+			}
   		},
 		
 		animation:{

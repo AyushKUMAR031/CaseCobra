@@ -39,13 +39,9 @@ enum CaseColor {
 }
 
 model Configuration {
-  id              String        @id @default(cuid())
-  width           Int
-  height          Int
-  imageUrl        String
-  color           CaseColor?
-  model           PhoneModel?
-  material        CaseMaterial?
-  finish          CaseFinish?
+  id String @id @default(cuid())
+  width Int
+  height Int
+  imageUrl String
   croppedImageUrl String?
 }
