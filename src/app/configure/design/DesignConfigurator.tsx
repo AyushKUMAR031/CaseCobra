@@ -36,7 +36,7 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
     const {mutate: saveConfig} = useMutation({
         mutationKey: ["save-config"],
         mutationFn: async (args: SaveConfigArgs) => {
-            // Save the config to the database
+            // Save the config to the database with the persisted image and performance
             await Promise.all([saveConfiguration(), _saveConfig(args)])
         },
         onError: () => {
@@ -47,7 +47,7 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
             })
         },
         onSuccess: () => {
-            router.push(`/configure/previews?id=${configId}`)
+            router.push(`/configure/preview?id=${configId}`)
         },
     })
 
