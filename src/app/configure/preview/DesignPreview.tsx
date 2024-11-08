@@ -10,15 +10,15 @@ import { useMutation } from '@tanstack/react-query'
 import { ArrowRight, Check } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Confetti from 'react-dom-confetti'
-// import { createCheckoutSession } from './actions'
+import { createCheckoutSession } from './actions'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 // import LoginModal from '@/components/LoginModal'
 
 const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
-//   const router = useRouter()
-//   const { toast } = useToast()
+  const router = useRouter()
+  const { toast } = useToast()
 //   const { id } = configuration
 //   const { user } = useKindeBrowserClient()
 //   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false)
@@ -41,21 +41,21 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   if (finish === 'textured') 
     totalPrice += PRODUCT_PRICES.finish.textured
 
-//   const { mutate: createPaymentSession } = useMutation({
-//     mutationKey: ['get-checkout-session'],
-//     mutationFn: createCheckoutSession,
-//     onSuccess: ({ url }) => {
-//       if (url) router.push(url)
-//       else throw new Error('Unable to retrieve payment URL.')
-//     },
-//     onError: () => {
-//       toast({
-//         title: 'Something went wrong',
-//         description: 'There was an error on our end. Please try again.',
-//         variant: 'destructive',
-//       })
-//     },
-//   })
+  const { mutate: createPaymentSession } = useMutation({
+    mutationKey: ['get-checkout-session'],
+    mutationFn: createCheckoutSession,
+    onSuccess: ({ url }) => {
+      if (url) router.push(url)
+      else throw new Error('Unable to retrieve payment URL.')
+    },
+    onError: () => {
+      toast({
+        title: 'Something went wrong',
+        description: 'There was an error on our end. Please try again.',
+        variant: 'destructive',
+      })
+    },
+  })
 
 //   const handleCheckout = () => {
 //     if (user) {

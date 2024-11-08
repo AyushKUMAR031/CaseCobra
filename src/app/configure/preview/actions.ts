@@ -54,4 +54,7 @@ export const createCheckoutSession = async ({configId,}:{configId : string}) => 
           },
         })
     }
+
+    //for payment gateway
+    return { url: url }
 }
