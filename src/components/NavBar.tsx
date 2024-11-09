@@ -19,7 +19,7 @@ const NavBar = async () => {
                         {user ? (
                             <>
                                 <Link href="/api/auth/logout" className={buttonVariants({size: 'sm', variant: "ghost"})}>Sign out</Link>
-                                {isAdmin ? <Link href="/api/auth/logout" className={buttonVariants({size: 'sm', variant: "ghost"})}>Dashboard ✨</Link> : null}
+                                {isAdmin ? <Link href="/dashboard" className={buttonVariants({size: 'sm', variant: "ghost"})}>Dashboard ✨</Link> : null}
                                 <Link href="/configure/upload" className={buttonVariants({size: 'sm', className: "hidden sm:flex items-center gap-1",  })}>Create case <ArrowRight className="ml-1.5 h-5 w-5"/></Link>
                             </>
                         ) : (
