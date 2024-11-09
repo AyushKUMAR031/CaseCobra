@@ -33,7 +33,7 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
 
     //useMutation hook for saving the configuration.
     //and redirecting to the third step.
-    const {mutate: saveConfig} = useMutation({
+    const {mutate: saveConfig, isPending} = useMutation({
         mutationKey: ["save-config"],
         mutationFn: async (args: SaveConfigArgs) => {
             // Save the config to the database with the persisted image and performance
@@ -396,7 +396,11 @@ const DesignConfigurator = ({configId, imageUrl, imageDimensions}: DesignConfigu
                             <p className='font-medium whitespace-nowrap'>
                                 {formatPrice((BASE_PRICE + options.finish.price + options.material.price) / 100)}
                             </p>
-                            <Button onClick={() => saveConfig({
+                            <Button 
+                                isLoading={isPending}
+                                disabled={isPending}
+                                loadingText="Saving"
+                                onClick={() => saveConfig({
                                 configId, 
                                 color: options.color.value,
                                 finish: options.finish.value,
