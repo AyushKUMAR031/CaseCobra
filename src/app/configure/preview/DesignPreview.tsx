@@ -15,7 +15,6 @@ import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import LoginModal from '@/components/LoginModal'
-import Script from 'next/script'
 
 const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const router = useRouter()
@@ -68,6 +67,7 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
     if (user) {
       // create payment session
       createPaymentSession({ configId: id })
+      setIsLoginModalOpen(false)
     } else {
       // need to log in
       localStorage.setItem('configurationId', id)
@@ -85,7 +85,6 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
           config={{ elementCount: 200, spread: 90 }}
         />
       </div>
-      <Script type="text/javascript" src="https://checkout.razorpay.com/v1/checkout.js" />
       <LoginModal isOpen={isLoginModalOpen} setIsOpen={setIsLoginModalOpen} />
 
       <div className='mt-20 flex flex-col items-center md:grid text-sm sm:grid-cols-12 sm:grid-rows-1 sm:gap-x-6 md:gap-x-8 lg:gap-x-12'>

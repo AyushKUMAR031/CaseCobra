@@ -4,32 +4,32 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 const STEPS = [
-    { 
+    {
         name: "Step 1: Add image",
         description: "Choose an image for your case",
         url: '/upload',
     },
-    { 
+    {
         name: "Step 2: Customize design",
         description: "Make the case yours",
         url: '/design',
     },
-    { 
-        name: "Step 1: Summary",
+    {
+        name: "Step 3: Summary",
         description: "Review your final design",
         url: '/preview',
     },
 ]
 
-const Steps = () =>{
+const Steps = () => {
     const pathname = usePathname();
     return (
         <ol className='rounded-md bg-white lg:flex lg:rounded-none lg:border-l lg:border-r lg:border-gray-200'>
             {STEPS.map((step, i) => {
                 const isCurrent = pathname.endsWith(step.url);
-                const isCompleted = STEPS.slice(i+1).some((step) => pathname.endsWith(step.url)
-            )
-            const imgPath = `/snake-${i+1}.png`;
+                const isCompleted = STEPS.slice(i + 1).some((step) => pathname.endsWith(step.url)
+                )
+                const imgPath = `/snake-${i + 1}.png`;
 
                 return (<li key={step.name} className="relative overflow-hidden lg:flex-1">
                     <div>
@@ -39,27 +39,27 @@ const Steps = () =>{
                                 'bg-zinc-700': isCurrent,
                                 'bg-primary': isCompleted,
                             }
-                            )}
-                            aria-hidden='true' 
+                        )}
+                            aria-hidden='true'
                         />
                         {/* combine slider for 2 and 3 */}
-                        <span className={cn( i !== 0 ? 'lg:pl-9' : '', 'flex items-center px-6 py-4 text-sm font-medium')}>
+                        <span className={cn(i !== 0 ? 'lg:pl-9' : '', 'flex items-center px-6 py-4 text-sm font-medium')}>
                             <span className='flex-shrink-0'>
                                 <img src={imgPath} className={cn('flex h-20 w-20 object-contain items-center justify-center',
                                     {
                                         'border-none': isCompleted,
                                         'border-zinc-700': isCurrent,
                                     }
-                                )}/>
+                                )} />
                             </span>
                             {/* for 3 */}
                             <span className='ml-4 h-full mt-0.5 flex min-w-0 flex-col justify-center'>
-                                <span className={cn('text-sm font-semibold text-zinc-700', 
+                                <span className={cn('text-sm font-semibold text-zinc-700',
                                     {
                                         'text-primary': isCompleted,
                                         'text-zinc-700': isCurrent,
                                     }
-                                    )}>
+                                )}>
                                     {step.name}
                                 </span>
 
