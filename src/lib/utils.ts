@@ -42,6 +42,6 @@ export function constructMetadata({
       creator: '@ayushKumar',
     },
     icons,
-    metadataBase: new URL("https://hyper-case-three.vercel.app/")
+    metadataBase: new URL("https://hyper-case-beta.vercel.app/")
   }
 }

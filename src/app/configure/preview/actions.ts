@@ -4,9 +4,10 @@ import { BASE_PRICE, PRODUCT_PRICES } from "@/config/product"
 import { db } from "@/db"
 import { stripe } from "@/lib/stripe"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
+import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types"
 import { Order } from "@prisma/client"
 
-export const createCheckoutSession = async ({configId,}:{configId : string}) => {
+export const createCheckoutSession = async ({configId, user}:{configId : string,user: KindeUser<any> | null}) => {
     const configuration = await db.configuration.findUnique({
         where: { id: configId },
     })
@@ -16,8 +17,8 @@ export const createCheckoutSession = async ({configId,}:{configId : string}) => 
     }
 
     // get the user from the session by kindServer and checking if the user is logged in
-    const {getUser} = getKindeServerSession()
-    const user = await getUser()
+    // const {getUser} = getKindeServerSession()
+    // const user = await getUser()
 
     if(!user) {
         throw new Error('You need to be logged in')
@@ -55,27 +56,6 @@ export const createCheckoutSession = async ({configId,}:{configId : string}) => 
           },
         })
     }
-
-    //for payment gateway
-    // const razorpayOrder = await razorpay.orders.create({
-    //     amount: price, // Razorpay expects amount in smallest currency unit (INR paise, etc.)
-    //     currency: 'INR',
-    //     receipt: `order_rcptid_${order.id}`,
-    //     notes: {
-    //       userId: user.id,
-    //       orderId: order.id,
-    //     },
-    //   });
-    
-    //   return {
-    //     orderId: razorpayOrder.id,
-    //     key: process.env.RAZORPAY_KEY_ID,
-    //     amount: razorpayOrder.amount,
-    //     currency: razorpayOrder.currency,
-    //     user,
-    //     // success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/thank-you?orderId=${order.id}`,
-    //     // cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/configure/preview?id=${configuration.id}`,
-    // };
 
     const product = await stripe.products.create({
         name: 'Custom iPhone Case',

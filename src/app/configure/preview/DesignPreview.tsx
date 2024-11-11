@@ -15,15 +15,19 @@ import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import LoginModal from '@/components/LoginModal'
+import { KindeUser } from '@kinde-oss/kinde-auth-nextjs/types'
 
-const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
+const DesignPreview = ({ configuration, user }: { configuration: Configuration, 
+  user:KindeUser<any>}) => {
   const router = useRouter()
   const { toast } = useToast()
 
   // for storing the data so that we can use it after auth -callback
   const { id } = configuration
   // getting the account or user info for the auth and data integrity
-  const { user } = useKindeBrowserClient()
+
+  // const { user } = useKindeBrowserClient()
+
   // to get the state of login or not
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false)
 
@@ -43,7 +47,7 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   let totalPrice = BASE_PRICE
   if (material === 'polycarbonate')
     totalPrice += PRODUCT_PRICES.material.polycarbonate
-  if (finish === 'textured') 
+  if (finish === 'textured')
     totalPrice += PRODUCT_PRICES.finish.textured
 
   const { mutate: createPaymentSession } = useMutation({
@@ -66,8 +70,8 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const handleCheckout = () => {
     if (user) {
       // create payment session
-      createPaymentSession({ configId: id })
-      setIsLoginModalOpen(false)
+      console.log(user.email);
+      createPaymentSession({ configId: id , user})
     } else {
       // need to log in
       localStorage.setItem('configurationId', id)
