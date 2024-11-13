@@ -15,6 +15,17 @@ const NavBar = async () => {
                     <Link href="/" className="flex z-40 font-semibold" >
                         Hyper<span className="text-green-600">case</span>
                     </Link>
+
+                    {/* Image Section in the Middle */}
+                    <div className="flex justify-center items-center flex-grow z-40 font-bold">
+                        <img 
+                            src="/ShopBanner.jpg" 
+                            alt="Banner" 
+                            className="h-10 w-fill object-cover rounded-md shadow-md" 
+                        />
+                        Jimmy<span className="text-green-600">.COM</span>
+                    </div>
+
                     <div className="h-full flex items-center space-x-4">
                         {user ? (
                             <>
@@ -31,6 +42,7 @@ const NavBar = async () => {
                             </>
                         )}
                     </div>
+                    
                 </div>
             </MaxWidthWrapper>
         </nav>
