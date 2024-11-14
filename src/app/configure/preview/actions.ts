@@ -62,7 +62,7 @@ export const createCheckoutSession = async ({configId, user}:{configId : string,
         images: [configuration.imageUrl],
         default_price_data: {
           currency: "USD",
-          unit_amount: price,
+          unit_amount: price/80,
         },
       })
     
